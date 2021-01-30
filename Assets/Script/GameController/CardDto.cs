@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-[Serializable]
-public class PlayerDto
+
+
+
+public class CardDto
 {
-    public string id;
-    public string name;
+    string id;
+    CardType type;
+
 }
