@@ -60,6 +60,7 @@ public class GameController : MonoBehaviour
         webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(postBytes);
         webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         webRequest.SetRequestHeader("Content-Type", "application/json");
+        webRequest.timeout = 5;
 
         yield return webRequest.SendWebRequest();
 

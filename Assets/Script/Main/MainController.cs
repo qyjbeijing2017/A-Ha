@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class MainController : MonoBehaviour
 {
     GameController controller;
+    [SerializeField]
+    AudioSource auShuffling;
 
     private void Awake()
     {
@@ -52,7 +54,11 @@ public class MainController : MonoBehaviour
             cards[i].transform.position = new Vector3(0, 0, index);
             cards[i].isBack = true;
         }
-
         StartCoroutine(controller.Update((ErrorCode) => { }));
+    }
+
+    public void ShuffleClicked()
+    {
+        auShuffling.Play();
     }
 }

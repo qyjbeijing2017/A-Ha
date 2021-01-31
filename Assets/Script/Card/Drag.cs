@@ -34,6 +34,7 @@ public class Drag : MonoBehaviour
         renderer.sortingOrder = 1;
         transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
         transform.SetSiblingIndex(transform.parent.childCount - 1);
+        GetComponent<Card>().drawCard.Play();
     }
 
     private void OnMouseDrag()
@@ -69,5 +70,6 @@ public class Drag : MonoBehaviour
                 );
 
         StartCoroutine(controller.Update((errorCode) => { }));
+        GetComponent<Card>().dealCard.Play();
     }
 }

@@ -19,7 +19,6 @@ public class StartUIController : MonoBehaviour
     [Tooltip("网络错误提示信息")]
     public string msgNetworkError;
 
-
     GameController controller;
 
     private void Awake()

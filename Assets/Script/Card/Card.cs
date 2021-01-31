@@ -34,6 +34,9 @@ public class Card : MonoBehaviour
     public Sprite font;
     public Sprite back;
 
+    public AudioSource drawCard;
+    public AudioSource dealCard;
+
 
     private bool m_isHide = false;
 
