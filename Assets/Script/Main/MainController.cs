@@ -24,6 +24,7 @@ public class MainController : MonoBehaviour
         {
             cads[i].id = i;
         }
+        Shuffle();
     }
 
     // Update is called once per frame
@@ -40,5 +41,15 @@ public class MainController : MonoBehaviour
     public void OnBack()
     {
         SceneManager.LoadScene("start");
+    }
+
+    public void Shuffle()
+    {
+        var cards = FindObjectsOfType<Card>();
+        for (int i = 0; i < cards.Length; ++i)
+        {
+            var index = Random.Range(-1.0f, 0.0f);
+            cards[i].transform.position = new Vector3(0, 0, index);
+        }
     }
 }

@@ -34,6 +34,7 @@ public class Card : MonoBehaviour
     public Sprite font;
     public Sprite back;
 
+
     private bool m_isHide = false;
 
     public bool isHide
@@ -85,4 +86,6 @@ public class Card : MonoBehaviour
             isBack = !isBack;
         }
     }
+
+
 }

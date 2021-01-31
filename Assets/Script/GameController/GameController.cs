@@ -86,6 +86,7 @@ public class GameController : MonoBehaviour
             var card = new CardDate();
             card.x = cards[i].transform.position.x;
             card.y = cards[i].transform.position.y;
+            card.z = cards[i].transform.position.z;
             card.isBack = cards[i].isBack;
             card.id = cards[i].id;
             cardsDate.Add(card);
@@ -171,7 +172,7 @@ public class GameController : MonoBehaviour
 
         for (int i = 0; i < cards.Length; ++i)
         {
-            cardsList[i].transform.position = new Vector3(changeDto.state.cardDates[i].x, changeDto.state.cardDates[i].y, cardsList[i].transform.position.z);
+            cardsList[i].transform.position = new Vector3(changeDto.state.cardDates[i].x, changeDto.state.cardDates[i].y, changeDto.state.cardDates[i].z);
             cardsList[i].isBack = changeDto.state.cardDates[i].isBack;
         }
     }

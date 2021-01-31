@@ -18,6 +18,7 @@ public class CardDate
     public int id;
     public float x;
     public float y;
+    public float z;
     public bool isBack;
 }
 

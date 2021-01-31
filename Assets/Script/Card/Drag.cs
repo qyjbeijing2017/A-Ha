@@ -31,7 +31,7 @@ public class Drag : MonoBehaviour
         pick = true;
         transform.SetSiblingIndex(transform.parent.childCount - 1);
         var renderer = GetComponent<SpriteRenderer>();
-        renderer.sortingOrder = 2;
+        renderer.sortingOrder = 1;
         transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
         transform.SetSiblingIndex(transform.parent.childCount - 1);
     }
@@ -46,10 +46,28 @@ public class Drag : MonoBehaviour
     private void OnMouseUp()
     {
         pick = false;
-        StartCoroutine(controller.Update((errorCode) => { }));
+
         var renderer = GetComponent<SpriteRenderer>();
         var card = GetComponent<Card>();
-        renderer.sortingOrder = card.isBack ? 0 : 1;
+        renderer.sortingOrder = 0;
         transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+
+        var cards = FindObjectsOfType<Card>();
+        for (int i = 0; i < cards.Length; ++i)
+        {
+            cards[i].transform.position = new Vector3(
+                cards[i].transform.position.x,
+                cards[i].transform.position.y,
+                cards[i].transform.position.z + 0.01f
+                );
+        }
+
+        card.transform.position = new Vector3(
+                card.transform.position.x,
+                card.transform.position.y,
+               -1.0f
+                );
+
+        StartCoroutine(controller.Update((errorCode) => { }));
     }
 }
