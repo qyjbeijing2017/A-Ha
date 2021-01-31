@@ -7,7 +7,6 @@ using UnityEngine.Networking;
 [SerializeField]
 public class CardsSet
 {
-    public Card card;
     public int count;
 }
 
@@ -77,6 +76,21 @@ public class GameController : MonoBehaviour
 
     public IEnumerator Update(RequestCallBack callBack)
     {
+
+        var cards = FindObjectsOfType<Card>();
+
+        List<CardDate> cardsDate = new List<CardDate>();
+
+        for (int i = 0; i < cards.Length; ++i)
+        {
+            var card = new CardDate();
+            card.x = cards[i].transform.position.x;
+            card.y = cards[i].transform.position.y;
+            card.isBack = cards[i].isBack;
+            cardsDate.Add(card);
+        }
+        dto.state.cardDates = cardsDate;
+
         string json = JsonUtility.ToJson(dto.state);
         byte[] postBytes = System.Text.Encoding.UTF8.GetBytes(json);
         UnityWebRequest webRequest = new UnityWebRequest($"http://{entrypoint}", "POST");
@@ -124,7 +138,7 @@ public class GameController : MonoBehaviour
         {
             var dtoOld = dto;
             dto = JsonUtility.FromJson<RoomDto>(webRequest.downloadHandler.text);
-            if (dto.lastmodified > dtoOld.lastmodified)
+            if (dto.timeStemp > dtoOld.timeStemp)
             {
                 onEvent?.Invoke(dto);
             }
@@ -145,7 +159,15 @@ public class GameController : MonoBehaviour
 
     public void Prase(RoomDto changeDto)
     {
+        var cards = FindObjectsOfType<Card>();
 
+        List<CardDate> cardsDate = new List<CardDate>();
+
+        for (int i = 0; i < cards.Length; ++i)
+        {
+            cards[i].transform.position = new Vector3(changeDto.state.cardDates[i].x, changeDto.state.cardDates[i].y, cards[i].transform.position.z);
+            cards[i].isBack = changeDto.state.cardDates[i].isBack;
+        }
     }
 
 

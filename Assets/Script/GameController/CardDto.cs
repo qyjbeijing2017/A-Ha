@@ -10,6 +10,4 @@ using System.Threading.Tasks;
 public class CardDto
 {
     string id;
-    CardType type;
-
 }

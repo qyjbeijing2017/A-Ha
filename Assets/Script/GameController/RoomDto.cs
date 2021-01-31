@@ -8,6 +8,6 @@ using System.Threading.Tasks;
 public class RoomDto
 {
     public List<PlayerDto> players;
-    public long lastmodified;
+    public long timeStemp;
     public StateDto state;
 }
