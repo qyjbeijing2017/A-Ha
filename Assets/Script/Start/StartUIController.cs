@@ -7,7 +7,9 @@ public class StartUIController : MonoBehaviour
 {
     [Header("UI组件")]
     [Tooltip("网络入口输出框")]
-    public UnityEngine.UI.InputField InfEntryPoint;
+    public UnityEngine.UI.InputField infEntryPoint;
+    [Tooltip("用户名接口")]
+    public UnityEngine.UI.InputField infUsername;
     [Tooltip("开始按钮")]
     public UnityEngine.UI.Button BtnStart;
     [Tooltip("提示框")]
@@ -28,7 +30,6 @@ public class StartUIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InfEntryPoint.text = controller.entrypoint;
     }
 
     // Update is called once per frame
@@ -40,18 +41,46 @@ public class StartUIController : MonoBehaviour
     public void OnStartClick()
     {
         BtnStart.interactable = false;
-        InfEntryPoint.interactable = false;
-        StartCoroutine(controller.GetRoom((stateCode) =>
+        infEntryPoint.interactable = false;
+        infUsername.interactable = false;
+        controller.player = new PlayerDto();
+        controller.player.id = System.Guid.NewGuid().ToString();
+        controller.player.name = infUsername.text;
+        controller.entrypoint = infEntryPoint.text;
+        StartCoroutine(controller.SignIn((stateCode) =>
         {
-            BtnStart.interactable = true;
-            InfEntryPoint.interactable = true;
             if (stateCode != 200)
             {
+                BtnStart.interactable = true;
+                infEntryPoint.interactable = true;
+                infUsername.interactable = true;
                 txtTip.text = msgNetworkError;
             }
             else
             {
-                SceneManager.LoadScene("room");
+                StartCoroutine(controller.Get((stateCodeGet) =>
+                {
+                    BtnStart.interactable = true;
+                    infEntryPoint.interactable = true;
+                    infUsername.interactable = true;
+                    if (stateCode != 200)
+                    {
+                        txtTip.text = msgNetworkError;
+                    }
+                    else
+                    {
+                        for (var i = 0; i < controller.dto.players.Count; ++i)
+                        {
+                            if (controller.dto.players[i].id == controller.player.id)
+                            {
+                                controller.index = i;
+                                break;
+                            }
+                        }
+                        SceneManager.LoadScene("main");
+                    }
+
+                }));
             }
         }));
     }

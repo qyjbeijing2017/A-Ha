@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 [Serializable]
 public class RoomDto
 {
-    public string name;
-    public List<PlayerDto> _players;
-    public string id;
-    public long lastmodified;
+    public List<PlayerDto> players;
+    public long timeStemp;
+    public StateDto state;
 }
-
