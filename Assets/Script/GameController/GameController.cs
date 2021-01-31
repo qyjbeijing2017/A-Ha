@@ -4,37 +4,15 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 
-[SerializeField]
-public class CardsSet
-{
-    public int count;
-}
-
 public class GameController : MonoBehaviour
 {
-    public delegate void RequestCallBack(long stateCode);
-    public delegate void Change(RoomDto roomDto);
-
+    public delegate void WebRequestCallBack(long errorCode);
 
     [Header("network")]
     [Tooltip("网络接入点")]
     public string entrypoint;
-
-    [HideInInspector]
-    public PlayerDto player;
-
-    [HideInInspector]
-    public int index;
-
-    [HideInInspector]
-    public RoomDto dto;
-
-    public event Change onEvent;
-
-    public event Change afterEvent;
-
-    [HideInInspector]
-    public bool stopGet = true;
+    [Tooltip("房间字典")]
+    public Dictionary<string, RoomDto> rooms;
 
     private void Awake()
     {
@@ -52,134 +30,20 @@ public class GameController : MonoBehaviour
     {
 
     }
-    public IEnumerator SignIn(RequestCallBack callBack)
+    public IEnumerator GetRoom(WebRequestCallBack callback)
     {
-        string json = JsonUtility.ToJson(player);
-        byte[] postBytes = System.Text.Encoding.UTF8.GetBytes(json);
-        UnityWebRequest webRequest = new UnityWebRequest($"http://{entrypoint}", "PUT");
-        webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(postBytes);
-        webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-        webRequest.SetRequestHeader("Content-Type", "application/json");
-
+        UnityWebRequest webRequest = UnityWebRequest.Get($"http://{entrypoint}/room");
         yield return webRequest.SendWebRequest();
 
-        if (webRequest.isHttpError || webRequest.isNetworkError)             //如果其 请求失败，或是 网络错误
+        if (webRequest.isHttpError || webRequest.isNetworkError)
         {
-            Debug.LogError(webRequest.error); //打印错误原因
+            Debug.Log(webRequest.error);
         }
-        else //请求成功
+        else
         {
-            player = JsonUtility.FromJson<PlayerDto>(webRequest.downloadHandler.text);
+            Debug.Log(webRequest.downloadHandler.text);
+            rooms = JsonUtility.FromJson<Serialization<string, RoomDto>>(webRequest.downloadHandler.text).ToDictionary();
         }
-        callBack(webRequest.responseCode);
-    }
-
-    public IEnumerator Update(RequestCallBack callBack)
-    {
-
-        var cards = FindObjectsOfType<Card>();
-
-        List<CardDate> cardsDate = new List<CardDate>();
-
-        for (int i = 0; i < cards.Length; ++i)
-        {
-            var card = new CardDate();
-            card.x = cards[i].transform.position.x;
-            card.y = cards[i].transform.position.y;
-            card.isBack = cards[i].isBack;
-            cardsDate.Add(card);
-        }
-        dto.state.cardDates = cardsDate;
-
-        string json = JsonUtility.ToJson(dto.state);
-        byte[] postBytes = System.Text.Encoding.UTF8.GetBytes(json);
-        UnityWebRequest webRequest = new UnityWebRequest($"http://{entrypoint}", "POST");
-        webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(postBytes);
-        webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-        webRequest.SetRequestHeader("Content-Type", "application/json");
-
-        yield return webRequest.SendWebRequest();
-
-        if (webRequest.isHttpError || webRequest.isNetworkError)             //如果其 请求失败，或是 网络错误
-        {
-            Debug.LogError(webRequest.error); //打印错误原因
-        }
-        callBack(webRequest.responseCode);
-    }
-
-    public IEnumerator SignOut(RequestCallBack callBack)
-    {
-        stopGet = true;
-        string json = JsonUtility.ToJson(player);
-        byte[] postBytes = System.Text.Encoding.UTF8.GetBytes(json);
-        UnityWebRequest webRequest = new UnityWebRequest($"http://{entrypoint}", "DELETE");
-        webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(postBytes);
-        webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-        webRequest.SetRequestHeader("Content-Type", "application/json");
-
-        yield return webRequest.SendWebRequest();
-
-        if (webRequest.isHttpError || webRequest.isNetworkError)             //如果其 请求失败，或是 网络错误
-        {
-            Debug.LogError(webRequest.error); //打印错误原因
-        }
-        callBack(webRequest.responseCode);
-    }
-
-    public IEnumerator Get(RequestCallBack callBack)
-    {
-        UnityWebRequest webRequest = UnityWebRequest.Get($"http://{entrypoint}");
-        yield return webRequest.SendWebRequest();
-        if (webRequest.isHttpError || webRequest.isNetworkError)             //如果其 请求失败，或是 网络错误
-        {
-            Debug.LogError(webRequest.error); //打印错误原因
-        }
-        else //请求成功
-        {
-            var dtoOld = dto;
-            dto = JsonUtility.FromJson<RoomDto>(webRequest.downloadHandler.text);
-            if (dto.timeStemp > dtoOld.timeStemp)
-            {
-                onEvent?.Invoke(dto);
-            }
-        }
-        callBack(webRequest.responseCode);
-    }
-
-
-    public IEnumerator GetLoop()
-    {
-        while (!stopGet)
-        {
-            yield return StartCoroutine(Get((errCode) => { }));
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
-
-
-    public void Prase(RoomDto changeDto)
-    {
-        var cards = FindObjectsOfType<Card>();
-
-        List<CardDate> cardsDate = new List<CardDate>();
-
-        for (int i = 0; i < cards.Length; ++i)
-        {
-            cards[i].transform.position = new Vector3(changeDto.state.cardDates[i].x, changeDto.state.cardDates[i].y, cards[i].transform.position.z);
-            cards[i].isBack = changeDto.state.cardDates[i].isBack;
-        }
-    }
-
-
-    public List<CardsSet> cardSet;
-
-    public void GameStart(RoomDto changeDto)
-    {
-        int counts = 0;
-
-        for (int i = 0; i < cardSet.Count; ++i)
-        {
-            counts += cardSet[i].count;
-        }
+        callback(webRequest.responseCode);
     }
 }
