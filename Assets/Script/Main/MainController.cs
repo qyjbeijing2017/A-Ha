@@ -18,12 +18,12 @@ public class MainController : MonoBehaviour
         controller.onEvent += controller.Prase;
         StartCoroutine(controller.GetLoop());
 
-        var cads = FindObjectsOfType<Card>();
+        //var cads = FindObjectsOfType<Card>();
 
-        for (var i = 0; i < cads.Length; ++i)
-        {
-            cads[i].id = i;
-        }
+        //for (var i = 0; i < cads.Length; ++i)
+        //{
+        //    cads[i].id = i;
+        //}
         Shuffle();
     }
 
