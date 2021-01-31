@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class Card : MonoBehaviour
 {
+    public int id;
     Drag drag;
     private bool m_isBack = true;
     public bool isBack

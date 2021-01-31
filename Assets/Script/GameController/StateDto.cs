@@ -15,6 +15,7 @@ public class CommandDto
 [Serializable]
 public class CardDate
 {
+    public int id;
     public float x;
     public float y;
     public bool isBack;

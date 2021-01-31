@@ -87,6 +87,7 @@ public class GameController : MonoBehaviour
             card.x = cards[i].transform.position.x;
             card.y = cards[i].transform.position.y;
             card.isBack = cards[i].isBack;
+            card.id = cards[i].id;
             cardsDate.Add(card);
         }
         dto.state.cardDates = cardsDate;
@@ -160,13 +161,18 @@ public class GameController : MonoBehaviour
     public void Prase(RoomDto changeDto)
     {
         var cards = FindObjectsOfType<Card>();
+        var cardsList = new List<Card>(cards);
+
+        cardsList.Sort((a, b) => { return a.id - b.id; });
+
+        changeDto.state.cardDates.Sort((a, b) => { return a.id - b.id; });
 
         List<CardDate> cardsDate = new List<CardDate>();
 
         for (int i = 0; i < cards.Length; ++i)
         {
-            cards[i].transform.position = new Vector3(changeDto.state.cardDates[i].x, changeDto.state.cardDates[i].y, cards[i].transform.position.z);
-            cards[i].isBack = changeDto.state.cardDates[i].isBack;
+            cardsList[i].transform.position = new Vector3(changeDto.state.cardDates[i].x, changeDto.state.cardDates[i].y, cardsList[i].transform.position.z);
+            cardsList[i].isBack = changeDto.state.cardDates[i].isBack;
         }
     }
 

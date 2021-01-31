@@ -17,6 +17,13 @@ public class MainController : MonoBehaviour
         controller.stopGet = false;
         controller.onEvent += controller.Prase;
         StartCoroutine(controller.GetLoop());
+
+        var cads = FindObjectsOfType<Card>();
+
+        for (var i = 0; i < cads.Length; ++i)
+        {
+            cads[i].id = i;
+        }
     }
 
     // Update is called once per frame
@@ -27,7 +34,7 @@ public class MainController : MonoBehaviour
 
     private void OnDestroy()
     {
-        StartCoroutine(controller.SignOut((errorCode)=> { }));
+        StartCoroutine(controller.SignOut((errorCode) => { }));
     }
 
     public void OnBack()
