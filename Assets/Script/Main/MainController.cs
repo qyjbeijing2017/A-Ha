@@ -50,6 +50,9 @@ public class MainController : MonoBehaviour
         {
             var index = Random.Range(-1.0f, 0.0f);
             cards[i].transform.position = new Vector3(0, 0, index);
+            cards[i].isBack = true;
         }
+
+        StartCoroutine(controller.Update((ErrorCode) => { }));
     }
 }
